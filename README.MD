@@ -14,6 +14,7 @@
 ## weigtht select one is suitable for you
 支持且不限于以下权重    
 - [detr-resnet-50](https://huggingface.co/facebook/detr-resnet-50)
+- [detr-resnet-50 no_timm](https://huggingface.co/facebook/detr-resnet-50/tree/no_timm)
 - [detr-resnet-101](https://huggingface.co/facebook/detr-resnet-101)
 - [yolos-base](https://huggingface.co/hustvl/yolos-base)
 - [yolos-small](https://huggingface.co/hustvl/yolos-small)
