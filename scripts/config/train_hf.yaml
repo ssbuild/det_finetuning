@@ -2,7 +2,7 @@ global_args:
   trainer_backend: pl
   enable_deepspeed: false
   enable_ptv2: false
-  enable_lora: true
+  enable_lora: false
   load_in_bit: 0
   config_merge: {}
   # 模型权重 ， 对应 config.constant_map.py
@@ -34,6 +34,12 @@ fp16: true
 do_train: true
 train_file:
 - ../data/train.json
+
+
+label_file:
+- ../data/label2id.json
+
+
 do_eval: false
 do_predict: false
 per_device_train_batch_size: 2

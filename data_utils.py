@@ -47,99 +47,9 @@ class NN_DataHelper(DataHelper):
         super(NN_DataHelper, self).__init__(*args, **kwargs)
 
     def on_get_labels(self, files: List[str]):
-        label2id = {
-            "N/A": 0,
-            "airplane": 5,
-            "apple": 53,
-            "backpack": 27,
-            "banana": 52,
-            "baseball bat": 39,
-            "baseball glove": 40,
-            "bear": 23,
-            "bed": 65,
-            "bench": 15,
-            "bicycle": 2,
-            "bird": 16,
-            "blender": 83,
-            "boat": 9,
-            "book": 84,
-            "bottle": 44,
-            "bowl": 51,
-            "broccoli": 56,
-            "bus": 6,
-            "cake": 61,
-            "car": 3,
-            "carrot": 57,
-            "cat": 17,
-            "cell phone": 77,
-            "chair": 62,
-            "clock": 85,
-            "couch": 63,
-            "cow": 21,
-            "cup": 47,
-            "desk": 69,
-            "dining table": 67,
-            "dog": 18,
-            "donut": 60,
-            "door": 71,
-            "elephant": 22,
-            "eye glasses": 30,
-            "fire hydrant": 11,
-            "fork": 48,
-            "frisbee": 34,
-            "giraffe": 25,
-            "hair drier": 89,
-            "handbag": 31,
-            "hat": 26,
-            "horse": 19,
-            "hot dog": 58,
-            "keyboard": 76,
-            "kite": 38,
-            "knife": 49,
-            "laptop": 73,
-            "microwave": 78,
-            "mirror": 66,
-            "motorcycle": 4,
-            "mouse": 74,
-            "orange": 55,
-            "oven": 79,
-            "parking meter": 14,
-            "person": 1,
-            "pizza": 59,
-            "plate": 45,
-            "potted plant": 64,
-            "refrigerator": 82,
-            "remote": 75,
-            "sandwich": 54,
-            "scissors": 87,
-            "sheep": 20,
-            "shoe": 29,
-            "sink": 81,
-            "skateboard": 41,
-            "skis": 35,
-            "snowboard": 36,
-            "spoon": 50,
-            "sports ball": 37,
-            "stop sign": 13,
-            "street sign": 12,
-            "suitcase": 33,
-            "surfboard": 42,
-            "teddy bear": 88,
-            "tennis racket": 43,
-            "tie": 32,
-            "toaster": 80,
-            "toilet": 70,
-            "toothbrush": 90,
-            "traffic light": 10,
-            "train": 7,
-            "truck": 8,
-            "tv": 72,
-            "umbrella": 28,
-            "vase": 86,
-            "window": 68,
-            "wine glass": 46,
-            "zebra": 24
-        }
+        with open(files[0], mode='r', encoding='utf-8') as f:
+            label2id = json.loads(f.read())
+        assert isinstance(label2id,dict)
         id2label = {i: label for label,i in label2id.items()}
         return label2id, id2label
 
@@ -185,6 +95,10 @@ class NN_DataHelper(DataHelper):
             "task_specific_params": task_specific_params,
         }
         kwargs_args.update(config_kwargs)
+        if with_labels and self.label2id is not None:
+            kwargs_args['label2id'] = self.label2id
+            kwargs_args['id2label'] = self.id2label
+            kwargs_args['num_labels'] = len(self.label2id) if self.label2id is not None else None
 
         config = load_configure(config_name=config_name or model_args.config_name,
                                 class_name=config_class_name,
@@ -260,8 +174,8 @@ class NN_DataHelper(DataHelper):
         batch = copy.copy(batch)
         images,annotations = [],[]
         for feature in batch:
-            path = str(feature["path"][0], encoding="utf-8") if isinstance(feature["path"][0],bytes) else feature["path"][0]
-            annotation = str(feature["labels"][0], encoding="utf-8") if isinstance(feature["labels"][0], bytes) else feature["labels"][0]
+            path = str(feature["path"], encoding="utf-8") if isinstance(feature["path"],bytes) else feature["path"]
+            annotation = str(feature["labels"], encoding="utf-8") if isinstance(feature["labels"], bytes) else feature["labels"]
             images.append(Image.open(path).convert("RGB"))
             annotations.append(json.loads(annotation))
         inputs = self.processor(images=images, annotations=annotations, return_tensors="pt")
@@ -272,8 +186,8 @@ class NN_DataHelper(DataHelper):
         data_args = self.data_args
         # schema for arrow parquet
         schema = {
-            "path": "binary_list",
-            "labels": "binary_list",
+            "path": "binary",
+            "labels": "binary",
         }
 
         # 缓存数据集
