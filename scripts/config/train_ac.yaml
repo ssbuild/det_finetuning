@@ -34,7 +34,7 @@ seed: 42
 fp16: true
 do_train: true
 train_file:
-- ../data/train.json
+- ../data/train*.json
 
 label_file:
 - ../data/label2id.json

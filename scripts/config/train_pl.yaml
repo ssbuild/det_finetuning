@@ -23,7 +23,7 @@ data_backend: parquet
 convert_onnx: false
 do_train: true
 train_file:
-- ../data/train.json
+- ../data/train*.json
 
 label_file:
 - ../data/label2id.json
