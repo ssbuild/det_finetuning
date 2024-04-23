@@ -1,5 +1,6 @@
 ```text
-    10-24 initial detection
+    2024-04-22 简化
+    2023-10-24 initial detection
 ```
 
 ## update information
